@@ -1,14 +1,24 @@
-import React from 'react';
+import { useRouter } from 'next/router'
 
-import GameStatus from '../components/GameStatus';
-import TargetSheet from '../components/TargetSheet';
-import PlayerSheet from '../components/PlayerSheet';
-import emptyBoard from '../data/emptyBoard';
-import initialStatus from '../data/initialStatus';
-import ships from '../data/ships';
+import GameStatus from '../../../../components/GameStatus';
+import TargetSheet from '../../../../components/TargetSheet';
+import PlayerSheet from '../../../../components/PlayerSheet';
+import emptyBoard from '../../../../data/emptyBoard';
+import initialStatus from '../../../../data/initialStatus';
+import ships from '../../../../data/ships';
+import Axios from 'axios';
 
 function Board() {
+  const router = useRouter();
   const [status, setStatus] = React.useState(initialStatus);
+
+  React.useEffect(() => {
+    setStatus({ ...status, gameId: router.query.id, player: router.query.player })
+    if (router.query.player === '2') {
+      Axios.post('/api/check-player2-joined', { gameid: router.query.id });
+    }
+  }, [router.query.id, router.query.player])
+
   const [playerBoard, setPlayerBoard] = React.useState(emptyBoard);
 
   function validatePlacement(rowIndex, cellIndex, shipSize, direction) {
@@ -98,7 +108,7 @@ function Board() {
       removeShipPiece(cell.rowIndex, cell.cellIndex, ship);
       return null;
     });
-    const newPlacement = { ...status.placement };
+    const newPlacement = status.placement;
     
     newPlacement[ship] = [];
     setStatus({ ...status, placement: newPlacement })
@@ -126,6 +136,7 @@ function Board() {
 
   function cellClick(rowIndex, cellIndex) {
     const { currentlyPlacing, placementDirection, placement } = status;
+    console.log(placement);
     const isValid = validatePlacement(rowIndex, cellIndex, ships[currentlyPlacing].size, placementDirection)
     if (isValid) {
       if (placement[currentlyPlacing]) {

@@ -30,6 +30,7 @@ h1, h2, h3, h4 {
     margin: 0px auto;
     font-size: 2em;
     text-shadow: 2px 2px $black;
+    cursor: pointer;
   }
 }
 
@@ -140,4 +141,14 @@ button {
   width: 24px;
   border-radius: 50%;
   margin: 4px;
+}
+
+#join {
+  text-align: center;
+  & input {
+    display: block;
+    margin: 16px auto;
+    padding: 8px;
+    border-radius: 4px;
+  }
 }

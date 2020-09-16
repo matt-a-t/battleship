@@ -1,4 +1,6 @@
 const initialStatus = {
+  gameId: '',
+  player: 0,
   placement: {
     carrier: [],
     battleship: [],
