@@ -24,8 +24,8 @@ export default async (req, res) => {
         const newGameId = uuidv4();
     
         const query = `
-          INSERT INTO games (game_id, player2joined, finished)
-          VALUES ($newGameId, 0, 0)
+          INSERT INTO games (game_id, player2joined, player1ready, player2ready, player_turn, player_won)
+          VALUES ($newGameId, 0, 0, 0, 1, 0)
         `;
         
         db.run(query, { $newGameId: newGameId }, err => {
@@ -38,7 +38,7 @@ export default async (req, res) => {
             resolve();
           }
         });
-        
+
         db.close();
       });
     default:

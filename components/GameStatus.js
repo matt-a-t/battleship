@@ -5,6 +5,8 @@ import ShipButtons from './ShipButtons';
 
 function GameStatus({ status, setStatus }) {
   const shipKeys = Object.keys(ships);
+  const [playersReady, setPlayersReady] = React.useState(false);
+  const [player2Joined, setPlayer2Joined] = React.useState(false);
 
   React.useEffect(() => {
     if (status.player === '1') {
@@ -12,10 +14,7 @@ function GameStatus({ status, setStatus }) {
         Axios.get(`/api/check-player2-joined?gameid=${status.gameId}`)
           .then(resp => {
             if (resp.data.joined) {
-              setStatus({
-                ...status,
-                player2Joined: true,
-              });
+              setPlayer2Joined(true);
               clearInterval(interval);
             }
           })
@@ -38,15 +37,12 @@ function GameStatus({ status, setStatus }) {
       phase: 'ready-to-play',
     });
 
-    Axios.post('/api/player-ready', { player: status.player, game_id: status.gameId });
+    Axios.post('/api/player-ready', { player: status.player, game_id: status.gameId, placement: status.placement });
     const interval = setInterval(() => {
-      Axios.get('/api/player-ready', { gameid: status.gameId })
+      Axios.get(`/api/player-ready?gameid=${status.gameId}`)
         .then(resp => {
           if (resp.data.ready) {
-            setStatus({
-              ...status,
-              playersReady: true,
-            });
+            setPlayersReady(true);
             clearInterval(interval);
           }
         })
@@ -64,7 +60,7 @@ function GameStatus({ status, setStatus }) {
   return (
     <div id="game-status">
       {
-
+        playersReady && <h2>Please wait for other player to fire</h2>
       }
       {
         status.phase === 'placement' &&

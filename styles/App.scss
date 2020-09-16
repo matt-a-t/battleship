@@ -2,6 +2,7 @@ $blue: #5e7eb5;
 $black: black;
 $white: white;
 $grey: darkgrey;
+$red: red;
 
 #App {
   background-image: url(/Ocean.png);
@@ -141,6 +142,22 @@ button {
   width: 24px;
   border-radius: 50%;
   margin: 4px;
+}
+
+.marker {
+  height: 16px;
+  width: 16px;
+  border-radius: 50%;
+  margin: 8px;
+  z-index: 2;
+  position: absolute;
+  &.miss {
+    background: $white;
+  }
+  &.hit {
+    margin:4px;
+    background: $red;
+  }
 }
 
 #join {

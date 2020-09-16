@@ -13,6 +13,7 @@ const initialStatus = {
   error: false,
   placementDirection: 'right',
   currentlyPlacing: 'carrier',
+  playerTurn: false,
 }
 
 export default initialStatus;

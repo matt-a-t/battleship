@@ -3,7 +3,8 @@ CREATE TABLE games (
   player2joined INTEGER,
   player1ready INTEGER,
   player2ready INTEGER,
-  finished INTEGER
+  player_turn INTEGER,
+  player_won INTEGER,
 );
 
 CREATE TABLE player1_placements (
