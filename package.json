@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build && node sql/create-tables.js",
+    "build": "next build",
     "sql": "node sql/create-tables.js",
     "start": "next start"
   },
