@@ -1,8 +1,10 @@
 import Axios from 'axios';
 import TargetRow from './TargetRow'
+import emptyBoard from '../data/emptyBoard';
 
-function TargetSheet({ status, setStatus, targetBoard, setTargetBoard }) {
+function TargetSheet({ status, setWin, turn, checkTurn, setTurn, setSunkMessage }) {
   const [shots, setShots] = React.useState([]);
+  const [targetBoard, setTargetBoard] = React.useState(emptyBoard);
   
   function validateShot(rowIndex, cellIndex) {
     for (let i=0; i < shots.length; i++) {
@@ -15,11 +17,12 @@ function TargetSheet({ status, setStatus, targetBoard, setTargetBoard }) {
 
   function fire(rowIndex, cellIndex) {
     setShots([...shots, { rowIndex, cellIndex }])
-    Axios.post('/fire', { rowIndex, cellIndex, gameid: status.gameId, player: status.player})
+    Axios.post('/api/fire', { rowIndex, cellIndex, gameid: status.gameId, player: status.player})
       .then(resp => {
-        const newBoard = [...targetBoard];
+        // https://dev.to/samanthaming/how-to-deep-clone-an-array-in-javascript-3cig
+        const newBoard = JSON.parse(JSON.stringify(targetBoard));
         if (resp.data.win) {
-          setStatus({ ...status, win: true })
+          setWin(true)
         }
         if (resp.data.hit) {
           newBoard[rowIndex][cellIndex] = 'hit'
@@ -27,23 +30,20 @@ function TargetSheet({ status, setStatus, targetBoard, setTargetBoard }) {
           newBoard[rowIndex][cellIndex] = 'miss'
         }
 
+        if (resp.data.shipSunk) {
+          setSunkMessage(`You sunk their ${resp.data.shipHit}`)
+        } else {
+          setSunkMessage('')
+        }
+
         setTargetBoard(newBoard);
+        setTurn(false)
+        checkTurn();
       })
-    const interval = setInterval(() => {
-      Axios.get(`/api/player-turn?gameid=${status.gameId}`)
-        .then(resp => {
-          if (resp.data.lose) {
-            setStatus({ ...status, lose: true })
-          }
-          if (resp.data.turn) {
-            setStatus({ ...status, playerTurn: true })
-          }
-        })
-    })
   }
 
   function cellClick(rowIndex, cellIndex) {
-    if (status.playerTurn && validateShot(rowIndex, cellIndex)) {
+    if (turn && validateShot(rowIndex, cellIndex)) {
       fire(rowIndex, cellIndex);
     }
   }

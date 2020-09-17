@@ -70,10 +70,10 @@ export default async (req, res) => {
           VALUES (
             $gameId,
             '${ placement.carrier.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
-            '${ placement.carrier.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
-            '${ placement.carrier.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
-            '${ placement.carrier.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
-            '${ placement.carrier.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}'
+            '${ placement.battleship.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
+            '${ placement.destroyer.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
+            '${ placement.submarine.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
+            '${ placement.patrolboat.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}'
 
           )
         `;

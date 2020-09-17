@@ -4,7 +4,8 @@ CREATE TABLE games (
   player1ready INTEGER,
   player2ready INTEGER,
   player_turn INTEGER,
-  player_won INTEGER,
+  last_shot TEXT,
+  player_won INTEGER
 );
 
 CREATE TABLE player1_placements (

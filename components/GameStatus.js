@@ -3,10 +3,10 @@ import ships from '../data/ships';
 import DirectionButtons from './DirectionButtons';
 import ShipButtons from './ShipButtons';
 
-function GameStatus({ status, setStatus }) {
+function GameStatus({ status, setStatus, lose, win, turn, checkTurn, player, sunkMessage }) {
   const shipKeys = Object.keys(ships);
   const [playersReady, setPlayersReady] = React.useState(false);
-  const [player2Joined, setPlayer2Joined] = React.useState(false);
+  const [player2Joined, setPlayer2Joined] = React.useState(player === '2');
 
   React.useEffect(() => {
     if (status.player === '1') {
@@ -22,6 +22,19 @@ function GameStatus({ status, setStatus }) {
     }
   }, [status.gameId, status.player])
   
+  React.useEffect(() => {
+    if (win || lose) {
+      setStatus({ ...status, phase: 'game-end' })
+    }
+  }, [win, lose])
+
+  React.useEffect(() => {
+    if (playersReady) {
+      setStatus({ ...status, phase: 'playing' })
+    }
+  }, [playersReady])
+
+
   function checkFinishedPlacing() {
     for (let i=0; i < shipKeys.length; i++) {
       if (status.placement[shipKeys[i]].length < 1) {
@@ -44,6 +57,7 @@ function GameStatus({ status, setStatus }) {
           if (resp.data.ready) {
             setPlayersReady(true);
             clearInterval(interval);
+            checkTurn();
           }
         })
     }, 5000)
@@ -60,11 +74,15 @@ function GameStatus({ status, setStatus }) {
   return (
     <div id="game-status">
       {
-        playersReady && <h2>Please wait for other player to fire</h2>
-      }
-      {
         status.phase === 'placement' &&
         <>
+          {
+            !player2Joined && 
+            <>
+              <h2>Please use the below code to have another player join your game</h2>
+              <h3>{status.gameId}</h3>
+            </>
+          }
           <h2>Place your ships</h2>
           <h3>Ships to place:</h3>
           <div id="ships-to-place">
@@ -96,6 +114,34 @@ function GameStatus({ status, setStatus }) {
             />
           </div>
         </>
+      }
+      {
+        status.phase === 'ready-to-play' && <h2>Please wait for the other player to finish placing thier ships</h2>
+      }
+      {
+        status.phase === 'playing' &&
+        <>
+          {
+            turn && <h2>Choose a target</h2>
+          }
+          {
+            !turn && <h2>Please wait for other player to fire</h2>
+          }
+        </>
+      }
+      {
+        status.phase === 'game-end' &&
+        <>
+          {
+            win && <h2>You Win! 🎉</h2>
+          }
+          {
+            lose && <h2>You lose... 😢</h2>
+          }
+        </>
+      }
+      {
+        sunkMessage && <h3>{sunkMessage} 💥</h3>
       }
     </div>
   )

@@ -26,7 +26,7 @@ export default async (req, res) => {
         const query = `
           INSERT INTO games (game_id, player2joined, player1ready, player2ready, player_turn, player_won)
           VALUES ($newGameId, 0, 0, 0, 1, 0)
-        `;
+        `
         
         db.run(query, { $newGameId: newGameId }, err => {
           if (err) {
@@ -34,12 +34,23 @@ export default async (req, res) => {
             res.status(500).json({ error: 'There was a problem creating the game.'});
             reject();
           } else {
-            res.status(200).json({ newGameId });
-            resolve();
+            const shotsInsert = `
+              INSERT INTO shots (game_id, player1_hits, player1_misses, player2_hits, player2_misses)
+              VALUES ($newGameId, '', '', '', '')
+            `
+            db.run(shotsInsert, { $newGameId: newGameId }, err2 => {
+              if (err2) {
+                console.log(err2);
+                res.status(500).json({ error: 'There was a problem creating the game.'});
+                reject();
+              } else {
+                res.status(200).json({ newGameId });
+                resolve();
+                db.close();
+              }
+            });
           }
         });
-
-        db.close();
       });
     default:
       res.status(404).end();

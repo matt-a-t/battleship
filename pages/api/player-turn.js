@@ -19,7 +19,7 @@ export default async (req, res) => {
           }
         )
 
-        const query = 'select player_turn, player_won from games where game_id=${gameId}'
+        const query = 'select player_turn, player_won, last_shot from games where game_id=$gameId'
 
         db.get(query, { $gameId: req.query.gameid }, (err, row) => {
           if (err) {
@@ -29,14 +29,15 @@ export default async (req, res) => {
           } else {
             let turn = false;
             let lose = false;
-            if (row.player_turn === req.query.player) {
+            if (row.player_turn === parseInt(req.query.player)) {
               turn = true;
             }
-            if (row.player_won !== 0 && row.player_won !== req.query.player) {
+            if (row.player_won !== 0 && row.player_won !== parseInt(req.query.player)) {
               lose = true;
             }
 
-            res.status(200).json({ turn, lose })
+            res.status(200).json({ turn, lose, lastShot: row.last_shot })
+            resolve();
           }
         })
       })

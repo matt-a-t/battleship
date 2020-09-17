@@ -1,5 +1,6 @@
 import ships from '../data/ships';
 import PlayerRow from './PlayerRow';
+import emptyBoard from '../data/emptyBoard';
 
 function PlayerSheet({ status, setStatus, playerBoard, setPlayerBoard }) {
   function validatePlacement(rowIndex, cellIndex, shipSize, direction) {
