@@ -3,11 +3,12 @@ import { resolve } from 'path'
 import sqlite3 from 'sqlite3';
 
 const sql = sqlite3.verbose();
-const filePath = resolve('sql', 'battleship.db');
+const filePath = resolve('./sql/battleship.db');
 
 export default async (req, res) => {
   switch(req.method) {
     case 'POST':
+      console.log(filePath);
       return new Promise((resolve, reject) => {
         var db = new sql.Database(
           filePath,
