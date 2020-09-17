@@ -71,7 +71,7 @@ const createShots = `
 
 const queryArray = [createGames, createP1Placements, createP2Placements, createShipStatus, createShots]
 
-const db = new sql.Database(path.resolve('./sql/battleship.db'), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE ,  err => {
+const db = new sql.Database(path.resolve('/sql/battleship.db'), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE ,  err => {
   if (err) {
     return console.error(err)
   } else {
@@ -84,6 +84,6 @@ const db = new sql.Database(path.resolve('./sql/battleship.db'), sqlite3.OPEN_RE
       })
     }
     console.log('Created database and tables')
-    console.log(path.resolve('./sql/battleship.db'))
+    console.log(path.resolve('/sql/battleship.db'))
   }
 })
