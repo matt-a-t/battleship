@@ -12,16 +12,13 @@ yarn dev
 
 You will also need to build the sqlite3 database
 ```bash
-cd sql
-sqlite3 battleship.db
-.read create-tables.sql
+npm run sql
+# or
+yarn sql
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Deploy on Vercel
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/import?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-
+While there is currently a version that is deployed on Vercel, there seems to be an [issue with SQLite3 databases on the platform](https://github.com/vercel/vercel/discussions/4443). I will be updating the project to use a different database solution, but for now the deployed version is not working.
