@@ -4,7 +4,7 @@ const sql = sqlite3.verbose();
 
 // const db_name = path.join(__dirname, "sql", "battleship.db");
 
-const createTables = `
+const createGames = `
   CREATE TABLE games (
     game_id TEXT PRIMARY KEY,
     player2joined INTEGER,
@@ -14,7 +14,9 @@ const createTables = `
     last_shot TEXT,
     player_won INTEGER
   );
+`;
 
+const createP1Placements = `
   CREATE TABLE player1_placements (
     game_id INTEGER,
     carrier TEXT,
@@ -25,7 +27,9 @@ const createTables = `
     FOREIGN KEY (game_id) REFERENCES games (game_id)
         ON DELETE CASCADE ON UPDATE NO ACTION
   );
+`;
 
+const createP2Placements = `
   CREATE TABLE player2_placements (
     game_id INTEGER,
     carrier TEXT,
@@ -36,7 +40,9 @@ const createTables = `
     FOREIGN KEY (game_id) REFERENCES games (game_id)
         ON DELETE CASCADE ON UPDATE NO ACTION
   );
+`;
 
+const createShipStatus = `
   CREATE TABLE ship_status (
     game_id INTEGER,
     player1_carrier TEXT,
@@ -52,7 +58,8 @@ const createTables = `
     FOREIGN KEY (game_id) REFERENCES games (game_id)
         ON DELETE CASCADE ON UPDATE NO ACTION
   );
-
+`
+const createShots = `
   CREATE TABLE shots (
     game_id INTEGER,
     player1_hits TEXT,
@@ -64,16 +71,20 @@ const createTables = `
   );
 `;
 
+const queryArray = [createGames, createP1Placements, createP2Placements, createShipStatus, createShots]
+
 const db = new sql.Database('./sql/battleship.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE ,  err => {
   if (err) {
     return console.error(err)
   } else {
-    db.run(createTables, (err2) => {
-      if (err2) {
-        console.error0(err2);
-      } else {
-        console.log('Created database and tables')
-      }
-    })
+    for (let i=0; i < queryArray.length; i++) {
+      db.run(queryArray[i], (err2) => {
+        if (err2) {
+          console.error(err2);
+        } else {
+        }
+      })
+    }
+    console.log('Created database and tables')
   }
 })
