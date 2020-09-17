@@ -1,5 +1,6 @@
 const sqlite3 = require('sqlite3');
 const sql = sqlite3.verbose();
+const path = require('path');
 
 const createGames = `
   CREATE TABLE games (
@@ -70,7 +71,7 @@ const createShots = `
 
 const queryArray = [createGames, createP1Placements, createP2Placements, createShipStatus, createShots]
 
-const db = new sql.Database('./sql/battleship.db', sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE ,  err => {
+const db = new sql.Database(path.resolve('./sql/battleship.db'), sqlite3.OPEN_READWRITE | sqlite3.OPEN_CREATE ,  err => {
   if (err) {
     return console.error(err)
   } else {
@@ -83,5 +84,6 @@ const db = new sql.Database('./sql/battleship.db', sqlite3.OPEN_READWRITE | sqli
       })
     }
     console.log('Created database and tables')
+    console.log(path.resolve('./sql/battleship.db'))
   }
 })
