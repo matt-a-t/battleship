@@ -7,7 +7,7 @@ export default async (req, res) => {
   switch(req.method) {
     case 'POST':
       return new Promise((resolve, reject) => {
-        var db = new sql.Database(
+        const db = new sql.Database(
           filePath,
           sqlite3.OPEN_READWRITE,
           err => {
