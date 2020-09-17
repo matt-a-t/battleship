@@ -1,8 +1,5 @@
 const sqlite3 = require('sqlite3');
-const path = require('path');
 const sql = sqlite3.verbose();
-
-// const db_name = path.join(__dirname, "sql", "battleship.db");
 
 const createGames = `
   CREATE TABLE games (
