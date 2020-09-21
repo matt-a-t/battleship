@@ -5,7 +5,6 @@
   "scripts": {
     "dev": "next dev",
     "build": "next build",
-    "sql": "node sql/create-tables.js",
     "start": "next start"
   },
   "dependencies": {

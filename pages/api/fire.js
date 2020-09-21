@@ -1,24 +1,9 @@
-import sqlite3 from 'sqlite3';
-import { resolve } from 'path'
-const sql = sqlite3.verbose();
-const filePath = resolve('sql/battleship.db');
+import { query } from '../../sql'
 
 export default async (req, res) => {
   switch(req.method) {
     case 'POST':
       return new Promise((resolve, reject) => {
-        const db = new sql.Database(
-          filePath,
-          sqlite3.OPEN_READWRITE,
-          err => {
-            if (err) {
-              console.log(err);
-              res.status(500).json({ error: 'There was a problem connecting to the database.' });
-              reject();
-            }
-          }
-        );
-
         let placementTable = '';
         let hitsField = '';
         let missField = '';
@@ -43,10 +28,11 @@ export default async (req, res) => {
         const placementQuery = `
           SELECT carrier, battleship, destroyer, submarine, patrolboat 
           FROM ${placementTable}
-          WHERE game_id = $gameId
+          WHERE game_id = $1
         `
 
-        db.get(placementQuery, { $gameId: req.body.gameid }, (err, row) => {
+        query(placementQuery, [req.body.gameid], (err, resp) => {
+          const row = resp.row[0]
           if (err) {
             console.log(err);
             res.status(500).json({ error: 'There was a problem with the query' });
@@ -68,10 +54,11 @@ export default async (req, res) => {
             }
 
             const shotsQuery = `
-              SELECT ${hit ? hitsField : missField} FROM shots WHERE game_id = $gameId 
+              SELECT ${hit ? hitsField : missField} FROM shots WHERE game_id = $1 
             `
 
-            db.get(shotsQuery, { $gameId: req.body.gameid }, (err2, row2) => {
+            query(shotsQuery, [req.body.gameid], (err2, resp2) => {
+              const row2 = resp2.rows[0]
               if (err2) {
                 console.log(err2);
                 res.status(500).json({ error: 'There was a problem with the query' });
@@ -100,10 +87,10 @@ export default async (req, res) => {
                 const updateShots = `
                   UPDATE shots
                   SET ${hit ? hitsField : missField} = '${hit ? row2[hitsField] : row2[missField]} | ${req.body.rowIndex} ${req.body.cellIndex}'
-                  WHERE game_id = $gameId
+                  WHERE game_id = $1
                 `;
 
-                db.run(updateShots, { $gameId: req.body.gameid }, (err3) => {
+                query(updateShots, [req.body.gameid], (err3) => {
                   if (err3) {
                     console.log(err3);
                     res.status(500).json({ error: 'There was a problem with the query' });
@@ -120,10 +107,10 @@ export default async (req, res) => {
                 const updateTurn = `
                   UPDATE games 
                   SET player_turn = ${playerTurn}, last_shot = '${req.body.rowIndex} ${req.body.cellIndex}'  
-                  WHERE game_id = $gameId
+                  WHERE game_id = $1
                 `;
 
-                db.run(updateTurn, { $gameId: req.body.gameid }, (err4) => {
+                query(updateTurn, [req.body.gameid], (err4) => {
                   if (err4) {
                     console.log(err4);
                     res.status(500).json({ error: 'There was a problem with the query' });

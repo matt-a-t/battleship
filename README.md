@@ -2,7 +2,17 @@ This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next
 
 ## Getting Started
 
-First, run the development server:
+First a Postgres database will need to be created and the connection information stored in environment variables. The script to create the tables can be found in `sql/create-tables.sql`. Next.js provides built in environment variable support using a `.env.local` file. Please store the following in it:
+
+```
+PGUSER=user_to_connect
+PGPASSWORD=password_for_above_user
+PGHOST=hostname_of_postgresql_instance
+PGDATABASE=databse_name
+PGPORT=5432 (or whatver port you choose)
+```
+
+Once this is done, run the development server.
 
 ```bash
 npm run dev
@@ -10,15 +20,8 @@ npm run dev
 yarn dev
 ```
 
-You will also need to build the sqlite3 database
-```bash
-npm run sql
-# or
-yarn sql
-```
-
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
 ## Deploy on Vercel
 
-While there is currently a version that is deployed on Vercel, there seems to be an [issue with SQLite3 databases on the platform](https://github.com/vercel/vercel/discussions/4443). I will be updating the project to use a different database solution, but for now the deployed version is not working.
+This project is also deployed on Vercel and can be found at [https://battleship.matt-a-t.vercel.app/](https://battleship.matt-a-t.vercel.app/)
