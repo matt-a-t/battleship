@@ -12,7 +12,6 @@ export default async (req, res) => {
             res.status(500).json({ error: 'There was a problem reading the database' });
             reject();
           } else {
-            console.log(resp.rows)
             res.status(200).json({ joined: (resp.rows[0].player2joined) })
             resolve()
           }
@@ -20,7 +19,7 @@ export default async (req, res) => {
       });
     case 'POST':
       return new Promise((resolve, reject) => {
-        const updateGames = 'UPDATE games set player2joined = 1 where game_id=$1';
+        const updateGames = 'UPDATE games set player2joined = true where game_id=$1';
 
         query(updateGames, [req.body.gameid], err => {
           if (err) {

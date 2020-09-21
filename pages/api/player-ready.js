@@ -4,7 +4,7 @@ export default async (req, res) => {
   switch(req.method) {
     case 'GET':
       return new Promise((resolve, reject) => {
-        const selectGames = 'select game_id from games where game_id=$1 and player1ready = 1 and player2ready = 1'
+        const selectGames = 'select game_id from games where game_id=$1 and player1ready = true and player2ready = true'
 
         query(selectGames, [req.query.gameid], (err, resp) => {
           if (err) {
@@ -33,13 +33,13 @@ export default async (req, res) => {
           res.status(400).json({ error: 'You must specify a player number' });
           reject();
         }
-        const readyQuery = `UPDATE games set ${readyField}= 1 where game_id=$1`;
+        const readyQuery = `UPDATE games set ${readyField}= true where game_id=$1`;
         
         const { placement } = req.body;
         const placementQuery = `
           INSERT INTO ${placementTable} (game_id, carrier, battleship, destroyer, submarine, patrolboat)
           VALUES (
-            $gameId,
+            $1,
             '${ placement.carrier.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
             '${ placement.battleship.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
             '${ placement.destroyer.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
@@ -64,7 +64,7 @@ export default async (req, res) => {
             reject();
           }
         }
-        
+
         res.status(204).end();
         resolve();
       });

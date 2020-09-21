@@ -32,7 +32,7 @@ export default async (req, res) => {
         `
 
         query(placementQuery, [req.body.gameid], (err, resp) => {
-          const row = resp.row[0]
+          const row = resp.rows[0]
           if (err) {
             console.log(err);
             res.status(500).json({ error: 'There was a problem with the query' });
@@ -69,8 +69,6 @@ export default async (req, res) => {
                   const hitSplit = row2[hitsField].split('|');
                   for (let i=0; i < wholeShip.length; i++) {
                     for (let j=0; j < hitSplit.length; j++) {
-                      console.log(hitSplit[j])
-                      console.log(wholeShip[i])
                       if (hitSplit[j].trim() === wholeShip[i].trim()) {
                         numHits++
                       }
@@ -78,7 +76,6 @@ export default async (req, res) => {
                   }
                 }
                 
-                console.log(numHits)
                 let shipSunk = false;
                 if (numHits === wholeShip.length) {
                   shipSunk = true;

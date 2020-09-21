@@ -5,7 +5,7 @@ CREATE TABLE games (
   player2ready BOOL,
   player_turn INTEGER,
   last_shot TEXT,
-  player_won BOOL
+  player_won INTEGER
 );
 
 CREATE TABLE player1_placements (

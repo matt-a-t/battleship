@@ -12,7 +12,7 @@ export default async (req, res) => {
             res.status(500).json({ error: 'There was a problem with the query' });
             reject();
           } else {
-            const row = resp.row[0];
+            const row = resp.rows[0];
             let turn = false;
             let lose = false;
             if (row.player_turn === parseInt(req.query.player)) {

@@ -9,7 +9,7 @@ export default async (req, res) => {
     
         const insertGames = `
           INSERT INTO games (game_id, player2joined, player1ready, player2ready, player_turn, player_won)
-          VALUES ($1, false, false, false, 1, false)
+          VALUES ($1, false, false, false, 1, 0)
         `
         
         query(insertGames, [newGameId], err => {
