@@ -1,32 +1,18 @@
-import sqlite3 from 'sqlite3';
-import { resolve } from 'path'
-const sql = sqlite3.verbose();
-const filePath = resolve('sql/battleship.db');
+import { query } from '../../sql'
 
 export default async (req, res) => {
   switch(req.method) {
     case 'GET':
       return new Promise((resolve, reject) => {
-        var db = new sql.Database(
-          filePath,
-          sqlite3.OPEN_READONLY,
-          err => {
-            if (err) {
-              console.log(err);
-              res.status(500).json({ error: 'There was a problem connecting to the database.' });
-              reject();
-            }
-          }
-        )
+        const selectGames = 'select player_turn, player_won, last_shot from games where game_id=$1'
 
-        const query = 'select player_turn, player_won, last_shot from games where game_id=$gameId'
-
-        db.get(query, { $gameId: req.query.gameid }, (err, row) => {
+        query(selectGames, [req.query.gameid], (err, resp) => {
           if (err) {
             console.log(err);
             res.status(500).json({ error: 'There was a problem with the query' });
             reject();
           } else {
+            const row = resp.rows[0];
             let turn = false;
             let lose = false;
             if (row.player_turn === parseInt(req.query.player)) {

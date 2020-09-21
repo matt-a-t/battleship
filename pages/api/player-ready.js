@@ -1,55 +1,26 @@
-import sqlite3 from 'sqlite3';
-import { resolve } from 'path'
-const sql = sqlite3.verbose();
-const filePath = resolve('sql/battleship.db');
+import { query } from '../../sql'
 
 export default async (req, res) => {
   switch(req.method) {
     case 'GET':
       return new Promise((resolve, reject) => {
-        var db = new sql.Database(
-          filePath,
-          sqlite3.OPEN_READONLY,
-          err => {
-            if (err) {
-              console.log(err);
-              res.status(500).json({ error: 'There was a problem connecting to the database.' });
-              reject();
-            }
-          }
-        )
+        const selectGames = 'select game_id from games where game_id=$1 and player1ready = true and player2ready = true'
 
-        const query = 'select game_id from games where game_id=$gameId and player1ready = 1 and player2ready = 1'
-
-        db.get(query, { $gameId: req.query.gameid }, (err, row) => {
+        query(selectGames, [req.query.gameid], (err, resp) => {
           if (err) {
             console.log(err);
             res.status(500).json({ error: 'There was a problem with the query' });
             reject();
           } else {
-            if (row) { res.status(200).json( { ready: true }); resolve(); }
+            if (resp.rows[0]) { res.status(200).json( { ready: true }); resolve(); }
             else { res.status(200).json( {ready: false }); resolve(); }
           }
         })
-        db.close();
       });
     case 'POST':
       return new Promise((resolve, reject) => {
-        var db = new sql.Database(
-          filePath,
-          sqlite3.OPEN_READWRITE,
-          err => {
-            if (err) {
-              console.log(err);
-              res.status(500).json({ error: 'There was a problem connecting to the database.' });
-              reject();
-            }
-          }
-        );
-
         let readyField = '';
         let placementTable = '';
-        // console.log(req.body.placement);
         if (req.body.player === "1") { 
           readyField = 'player1ready'
           placementTable =  'player1_placements'
@@ -62,13 +33,13 @@ export default async (req, res) => {
           res.status(400).json({ error: 'You must specify a player number' });
           reject();
         }
-        const readyQuery = `UPDATE games set ${readyField}= 1 where game_id=$gameId`;
+        const readyQuery = `UPDATE games set ${readyField}= true where game_id=$1`;
         
         const { placement } = req.body;
         const placementQuery = `
           INSERT INTO ${placementTable} (game_id, carrier, battleship, destroyer, submarine, patrolboat)
           VALUES (
-            $gameId,
+            $1,
             '${ placement.carrier.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
             '${ placement.battleship.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
             '${ placement.destroyer.map(c => (`${c.rowIndex} ${c.cellIndex}`)).join('|')}',
@@ -78,7 +49,7 @@ export default async (req, res) => {
           )
         `;
 
-        db.run(readyQuery, { $gameId: req.body.game_id }, err => {
+        query(readyQuery, [req.body.game_id], err => {
           if (err) {
             console.log(err);
             res.status(500).json({ error: 'There was a problem updating the game' });
@@ -86,15 +57,13 @@ export default async (req, res) => {
           }
         });
 
-        db.run(placementQuery, { $gameId: req.body.game_id }), err => {
+        query(placementQuery, [req.body.game_id]), err => {
           if (err) {
             console.log(err);
             res.status(500).json({ error: 'There was a problem updating the game' });
             reject();
           }
         }
-
-        db.close();
 
         res.status(204).end();
         resolve();
